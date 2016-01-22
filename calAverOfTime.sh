@@ -6,17 +6,32 @@ logLineSum=0
 splitLineSum=0
 
 preTreatDir="/tmp/preDir"
-pretreatFilename="$preTreatDir""/midFile.txt"
-resultDir="/tmp/resultDir"              ### tmp directory has no authority problem
+pretreatFilename=""
 splitDir="/tmp/splitDir"
+resultDir="/tmp/resultDir"              ### tmp directory has no authority problem
 keyword="/Commercial "
 
 ###
 function create_dir() {
     if [ -d "$1" ];then                 ### avoid file confilct in the creating directory 
-        rm -r "$1"
+        if [ "$2" = 1 ];then
+            timepara=`date "+%s"`
+            preTreatDir="$preTreatDir""$timepara"
+            mkdir "$preTreatDir"
+        elif [ "$2" = 2 ];then
+            timepara=`date "+%s"`
+            splitDir="$splitDir""$timepara"
+            mkdir "$splitDir"
+        elif [ "$2" = 3 ];then
+            timepara=`date "+%s"`
+            resultDir="$resultDir""$timepara"
+            mkdir "$resultDir"
+        else
+            echo "directory type is not provided." 
+        fi
+    else
+        mkdir "$1"
     fi
-    mkdir "$1"
 }
 
 ###
@@ -30,7 +45,8 @@ function delete_tmp_dir() {
 
 ###
 function preTreat() {
-    create_dir $preTreatDir 
+    create_dir $2  1                  ### the second para represent the directory type  
+    pretreatFilename="$preTreatDir""/midFile.txt"
     grep "$keyword" "$1" > $pretreatFilename    ### pretreat the acccess.log , acquire the keyword file.
 }
 
@@ -66,11 +82,11 @@ function print_result() {
 
 ###
 function split_log_file() {
-    create_dir "$2"
+    create_dir "$2" 2
     filename=$1
     filename=${filename##*/}            ### acquire the file name of the path 
-    cp "$1" "$2"
-    cd "$2"
+    cp "$1" "$splitDir"
+    cd "$splitDir"
 
     split -l "$3" -a 4 -d "$filename" 
 
@@ -123,14 +139,15 @@ function process_split_log_context() {
 
 ### 
 function traversal_split_dir() {
-    create_dir "$2"
+    create_dir "$2" 3
     dir="$1""/*"
     fileCount=0
     
     for file in $dir   
     do 
         if [ -f "$file" ];then
-            process_split_log_context "$file" "$2" "$fileCount" &   ### run at the back-end ,to improve the performence 
+            process_split_log_context "$file" "$resultDir" "$fileCount" &           ### run at the back-end ,to improve the performence 
+            #process_split_log_context "$file" "$2" "$fileCount" &                  ### run at the back-end ,to improve the performence 
             let fileCount+=1
         else
             echo "$file is not a file"
@@ -138,10 +155,11 @@ function traversal_split_dir() {
     done
 
     wait
-    dir="$2""/*"
+    #dir="$2""/*"
+    dir="$resultDir""/*"                                                            ### resultDir may be changed by the "  create_dir "$2" 3 "
     summary_result "$dir" 
 }
-preTreat $1                                                                          ### pretreat the access.log ,improve execution efficiency.
+preTreat $1  "$preTreatDir"                                                                          ### pretreat the access.log ,improve execution efficiency.
 calculate_log_line_sum "$pretreatFilename"                                           
 calculate_split_line_sum "$logLineSum"                                              
 

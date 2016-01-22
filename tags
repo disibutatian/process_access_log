@@ -1,0 +1,16 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+calculate_log_line_sum	calAverOfTime.sh	/^function calculate_log_line_sum() {$/;"	f
+calculate_split_line_sum	calAverOfTime.sh	/^function calculate_split_line_sum() {$/;"	f
+create_dir	calAverOfTime.sh	/^function create_dir() {$/;"	f
+delete_tmp_dir	calAverOfTime.sh	/^function delete_tmp_dir() {$/;"	f
+preTreat	calAverOfTime.sh	/^function preTreat() {$/;"	f
+print_result	calAverOfTime.sh	/^function print_result() {$/;"	f
+process_split_log_context	calAverOfTime.sh	/^function process_split_log_context() {$/;"	f
+split_log_file	calAverOfTime.sh	/^function split_log_file() {$/;"	f
+summary_result	calAverOfTime.sh	/^function summary_result() {$/;"	f
+traversal_split_dir	calAverOfTime.sh	/^function traversal_split_dir() {$/;"	f
