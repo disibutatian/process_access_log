@@ -5,6 +5,8 @@ result=(0 0 0)
 logLineSum=0
 splitLineSum=0
 
+preTreatDir="/tmp/preDir"
+pretreatFilename="$preTreatDir""/midFile.txt"
 resultDir="/tmp/resultDir"              ### tmp directory has no authority problem
 splitDir="/tmp/splitDir"
 keyword="/Commercial "
@@ -27,6 +29,13 @@ function delete_tmp_dir() {
 }
 
 ###
+function preTreat() {
+    create_dir $preTreatDir 
+    grep "$keyword" "$1" > $pretreatFilename    ### pretreat the acccess.log , acquire the keyword file.
+}
+
+
+###
 function calculate_log_line_sum() {
     logLineSum=` cat "$1" | wc -l `
 }
@@ -42,7 +51,8 @@ function calculate_split_line_sum() {
 
 ###
 function print_result() {
-    echo "sumOfLine              ""${result[0]}"
+    #echo "sumOfLine              ""${result[0]}"
+    echo "sumOfLine              ""$logLineSum"  ### adapt the pretreatment way 
     echo "sumOfeffectiveLine     ""${result[1]}"
     echo "sumOfTime              ""${result[2]}"
 
@@ -131,14 +141,18 @@ function traversal_split_dir() {
     dir="$2""/*"
     summary_result "$dir" 
 }
+preTreat $1                                                                          ### pretreat the access.log ,improve execution efficiency.
+calculate_log_line_sum "$pretreatFilename"                                           
+calculate_split_line_sum "$logLineSum"                                              
 
-calculate_log_line_sum $1                                           ### $1 is the absolute or relative path
-calculate_split_line_sum "$logLineSum"
+calculate_log_line_sum "$1"                                                          ### $1 is the absolute or relative path
+#echo "$logLineSum"
 
-split_log_file $1 "$splitDir" "$splitLineSum"
+split_log_file "$pretreatFilename" "$splitDir" "$splitLineSum"
 traversal_split_dir "$splitDir" "$resultDir"
 
 delete_tmp_dir "$splitDir"
 delete_tmp_dir "$resultDir"
+delete_tmp_dir "$preTreatDir"
 
 print_result
